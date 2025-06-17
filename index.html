@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optometric Clinical Record Card</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .warning-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+
+        .section-header {
+            font-size: 20px;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .form-row > .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        input[type="date"],
+        input[type="time"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .mic-button {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        textarea ~ .mic-button {
+            top: 15px;
+            transform: none;
+        }
+
+        .mic-button:hover {
+            background: #2980b9;
+        }
+
+        .mic-button.recording {
+            background: #e74c3c;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload-area:hover {
+            border-color: #3498db;
+            background: #f0f8ff;
+        }
+
+        .file-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .file-item {
+            position: relative;
+            padding: 10px;
+            background: #ecf0f1;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .file-remove {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+
+        .privacy-notice {
+            margin-top: 20px;
+            padding: 15px;
+            background: #ecf0f1;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: center;
+            color: #7f8c8d;
+        }
+
+        .checklist-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .form-row {
+                flex-direction: column;
+            }
+
+            .form-row > .form-group {
+                min-width: 100%;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                padding: 20px;
+            }
+
+            .mic-button,
+            .button-group,
+            .warning-notice,
+            .privacy-notice {
+                display: none !important;
+            }
+
+            .section {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="container" id="recordCard">
+        <h1>Optometric Clinical Record Card</h1>
+        
+        <div class="warning-notice">
+            ⚠️ This tool does not store data. Please download or print before closing your browser.
+        </div>
+
+        <!-- Patient Details -->
+        <div class="section">
+            <h2 class="section-header">Patient Details</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="name" name="name">
+                        <button class="mic-button" data-target="name" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="dob">Date of Birth</label>
+                    <input type="date" id="dob" name="dob" onchange="calculateAge()">
+                </div>
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="text" id="age" name="age" readonly>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="address">Address</label>
+                <div class="input-wrapper">
+                    <textarea id="address" name="address"></textarea>
+                    <button class="mic-button" data-target="address" aria-label="Voice input">🎤</button>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="telephone">Telephone Number</label>
+                    <div class="input-wrapper">
+                        <input type="tel" id="telephone" name="telephone">
+                        <button class="mic-button" data-target="telephone" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="idReference">ID Reference</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="idReference" name="idReference">
+                        <button class="mic-button" data-target="idReference" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="occupation">Occupation</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="occupation" name="occupation">
+                        <button class="mic-button" data-target="occupation" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Consent to Contact?</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="consentContact" name="consentContact">
+                        <label for="consentContact">Yes</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reason for Visit -->
+        <div class="section">
+            <h2 class="section-header">Reason for Visit</h2>
+            <div class="form-group">
+                <label for="reasonVisit">Reason for Visit</label>
+                <div class="input-wrapper">
+                    <textarea id="reasonVisit" name="reasonVisit"></textarea>
+                    <button class="mic-button" data-target="reasonVisit" aria-label="Voice input">🎤</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medical & Ocular History -->
+        <div class="section">
+            <h2 class="section-header">Medical & Ocular History</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="generalHealth">General Health (GH)</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="generalHealth" name="generalHealth">
+                        <button class="mic-button" data-target="generalHealth" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="medication">Medication (MED)</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="medication" name="medication">
+                        <button class="mic-button" data-target="medication" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pastOcularHistory">Past Ocular History (POH)</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="pastOcularHistory" name="pastOcularHistory">
+                        <button class="mic-button" data-target="pastOcularHistory" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="allergies">Allergies</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="allergies" name="allergies">
+                        <button class="mic-button" data-target="allergies" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="familyHistory">Family History (FH)</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="familyHistory" name="familyHistory">
+                        <button class="mic-button" data-target="familyHistory" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="familyOcularHistory">Family Ocular History (FOH)</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="familyOcularHistory" name="familyOcularHistory">
+                        <button class="mic-button" data-target="familyOcularHistory" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lifestyle & Visual Symptoms -->
+        <div class="section">
+            <h2 class="section-header">Lifestyle & Visual Symptoms</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Drives?</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="drives" name="drives">
+                        <label for="drives">Yes</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="hobbies">Hobbies</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="hobbies" name="hobbies">
+                        <button class="mic-button" data-target="hobbies" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Smokes?</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="smokes" name="smokes">
+                        <label for="smokes">Yes</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Diplopia?</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="diplopia" name="diplopia">
+                        <label for="diplopia">Yes</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Flashing Lights?</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="flashingLights" name="flashingLights">
+                        <label for="flashingLights">Yes</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Floaters?</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="floaters" name="floaters">
+                        <label for="floaters">Yes</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="otherConcerns">Any other concerns</label>
+                <div class="input-wrapper">
+                    <textarea id="otherConcerns" name="otherConcerns"></textarea>
+                    <button class="mic-button" data-target="otherConcerns" aria-label="Voice input">🎤</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clinical Observations -->
+        <div class="section">
+            <h2 class="section-header">Clinical Observations</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="vaRE">VA - RE</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="vaRE" name="vaRE">
+                        <button class="mic-button" data-target="vaRE" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="vaLE">VA - LE</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="vaLE" name="vaLE">
+                        <button class="mic-button" data-target="vaLE" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="iopRE">IOP - RE</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="iopRE" name="iopRE">
+                        <button class="mic-button" data-target="iopRE" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="iopLE">IOP - LE</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="iopLE" name="iopLE">
+                        <button class="mic-button" data-target="iopLE" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="iopTime">Time</label>
+                    <input type="time" id="iopTime" name="iopTime">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fundusRE">Fundus Appearance - RE</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="fundusRE" name="fundusRE">
+                        <button class="mic-button" data-target="fundusRE" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="fundusLE">Fundus Appearance - LE</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="fundusLE" name="fundusLE">
+                        <button class="mic-button" data-target="fundusLE" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="discRE">Disc appearance - RE</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="discRE" name="discRE">
+                        <button class="mic-button" data-target="discRE" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="discLE">Disc appearance - LE</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="discLE" name="discLE">
+                        <button class="mic-button" data-target="discLE" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="maculaRE">Macula - RE</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="maculaRE" name="maculaRE">
+                        <button class="mic-button" data-target="maculaRE" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="maculaLE">Macula - LE</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="maculaLE" name="maculaLE">
+                        <button class="mic-button" data-target="maculaLE" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="vesselsRE">Vessels - RE</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="vesselsRE" name="vesselsRE">
+                        <button class="mic-button" data-target="vesselsRE" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="vesselsLE">Vessels - LE</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="vesselsLE" name="vesselsLE">
+                        <button class="mic-button" data-target="vesselsLE" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="peripheralRE">Peripheral Retina - RE</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="peripheralRE" name="peripheralRE">
+                        <button class="mic-button" data-target="peripheralRE" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="peripheralLE">Peripheral Retina - LE</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="peripheralLE" name="peripheralLE">
+                        <button class="mic-button" data-target="peripheralLE" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="mediaRE">Media clarity - RE</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="mediaRE" name="mediaRE">
+                        <button class="mic-button" data-target="mediaRE" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="mediaLE">Media clarity - LE</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="mediaLE" name="mediaLE">
+                        <button class="mic-button" data-target="mediaLE" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="cdRatioRE">C:D Ratio - RE</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="cdRatioRE" name="cdRatioRE">
+                        <button class="mic-button" data-target="cdRatioRE" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="cdRatioLE">C:D Ratio - LE</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="cdRatioLE" name="cdRatioLE">
+                        <button class="mic-button" data-target="cdRatioLE" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>OCT Taken?</label>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="octTaken" name="octTaken">
+                    <label for="octTaken">Yes</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dispensing Section -->
+        <div class="section">
+            <h2 class="section-header">Dispensing Section</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="prescriptionType">Prescription Type</label>
+                    <select id="prescriptionType" name="prescriptionType">
+                        <option value="">Select...</option>
+                        <option value="SV">SV</option>
+                        <option value="Bifocal">Bifocal</option>
+                        <option value="Varifocal">Varifocal</option>
+                        <option value="Plano">Plano</option>
+                        <option value="Readers">Readers</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="frameChosen">Frame Chosen</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="frameChosen" name="frameChosen">
+                        <button class="mic-button" data-target="frameChosen" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="lensType">Lens Type</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="lensType" name="lensType">
+                        <button class="mic-button" data-target="lensType" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pdRE">PD - RE</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="pdRE" name="pdRE">
+                        <button class="mic-button" data-target="pdRE" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="pdLE">PD - LE</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="pdLE" name="pdLE">
+                        <button class="mic-button" data-target="pdLE" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="heightsRE">Heights - RE</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="heightsRE" name="heightsRE">
+                        <button class="mic-button" data-target="heightsRE" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="heightsLE">Heights - LE</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="heightsLE" name="heightsLE">
+                        <button class="mic-button" data-target="heightsLE" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="abdbl">A/B/DBL measurements (optional)</label>
+                <div class="input-wrapper">
+                    <input type="text" id="abdbl" name="abdbl">
+                    <button class="mic-button" data-target="abdbl" aria-label="Voice input">🎤</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="dispensingComments">Dispensing Comments</label>
+                <div class="input-wrapper">
+                    <textarea id="dispensingComments" name="dispensingComments"></textarea>
+                    <button class="mic-button" data-target="dispensingComments" aria-label="Voice input">🎤</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Practitioner Notes & Consent -->
+        <div class="section">
+            <h2 class="section-header">Practitioner Notes & Consent</h2>
+            <div class="form-group">
+                <label for="additionalNotes">Additional Notes</label>
+                <div class="input-wrapper">
+                    <textarea id="additionalNotes" name="additionalNotes"></textarea>
+                    <button class="mic-button" data-target="additionalNotes" aria-label="Voice input">🎤</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Advice Given</label>
+                <div class="checklist-group">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="reassured" name="adviceGiven" value="Reassured">
+                        <label for="reassured">Reassured</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="lifestyleAdvice" name="adviceGiven" value="Lifestyle Advice">
+                        <label for="lifestyleAdvice">Lifestyle Advice</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="referralMade" name="adviceGiven" value="Referral Made">
+                        <label for="referralMade">Referral Made</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="seeGP" name="adviceGiven" value="See GP">
+                        <label for="seeGP">See GP</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="rebooked" name="adviceGiven" value="Rebooked">
+                        <label for="rebooked">Rebooked</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="signature">Signature</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="signature" name="signature" placeholder="Type your name">
+                        <button class="mic-button" data-target="signature" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="date">Date</label>
+                    <input type="date" id="date" name="date" value="">
+                </div>
+            </div>
+        </div>
+
+        <!-- Uploads Section -->
+        <div class="section">
+            <h2 class="section-header">Uploads Section</h2>
+            <div class="form-group">
+                <label>Upload Files (PDF, Images, OCT, Referral Letters)</label>
+                <div class="file-upload-area" onclick="document.getElementById('fileUpload').click()">
+                    <p>Click to upload files or drag and drop</p>
+                    <input type="file" id="fileUpload" multiple accept=".pdf,.jpg,.jpeg,.png,.gif" style="display: none;">
+                </div>
+                <div class="file-preview" id="filePreview"></div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="saveForm()">Save Form</button>
+            <button class="btn btn-secondary" onclick="window.print()">Print Form</button>
+            <button class="btn btn-success" onclick="downloadPDF()">Download PDF</button>
+            <button class="btn btn-warning" onclick="emailForm()">Email Summary</button>
+        </div>
+
+        <div class="privacy-notice">
+            <p><em>Voice input is processed locally in your browser. No audio is stored or transmitted.</em></p>
+            <p><em>By using this form, you agree to standard optometric documentation practices.</em></p>
+        </div>
+    </div>
+
+    <script>
+        // Auto-save functionality
+        let autoSaveTimer;
+        const formInputs = document.querySelectorAll('input, textarea, select');
+
+        formInputs.forEach(input => {
+            input.addEventListener('input', () => {
+                clearTimeout(autoSaveTimer);
+                autoSaveTimer = setTimeout(saveToLocalStorage, 1000);
+            });
+        });
+
+        function saveToLocalStorage() {
+            const formData = {};
+            formInputs.forEach(input => {
+                if (input.type === 'checkbox') {
+                    formData[input.id] = input.checked;
+                } else {
+                    formData[input.id] = input.value;
+                }
+            });
+            localStorage.setItem('optometricRecordCard', JSON.stringify(formData));
+            console.log('Auto-saved to browser');
+        }
+
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem('optometricRecordCard');
+            if (savedData) {
+                const formData = JSON.parse(savedData);
+                Object.keys(formData).forEach(key => {
+                    const input = document.getElementById(key);
+                    if (input) {
+                        if (input.type === 'checkbox') {
+                            input.checked = formData[key];
+                        } else {
+                            input.value = formData[key];
+                        }
+                    }
+                });
+            }
+        }
+
+        // Calculate age from DOB
+        function calculateAge() {
+            const dob = document.getElementById('dob').value;
+            if (dob) {
+                const birthDate = new Date(dob);
+                const today = new Date();
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                document.getElementById('age').value = age;
+            }
+        }
+
+        // Set today's date
+        document.getElementById('date').value = new Date().toISOString().split('T')[0];
+
+        // Voice recognition setup
+        let recognition;
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = true;
+            recognition.lang = 'en-GB';
+        }
+
+        // Voice input functionality
+        const micButtons = document.querySelectorAll('.mic-button');
+        micButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                if (!recognition) {
+                    alert('Speech recognition is not supported in your browser. Please use Chrome or Safari.');
+                    return;
+                }
+
+                const targetId = this.getAttribute('data-target');
+                const targetInput = document.getElementById(targetId);
+                
+                if (this.classList.contains('recording')) {
+                    recognition.stop();
+                    this.classList.remove('recording');
+                    this.innerHTML = '🎤';
+                } else {
+                    this.classList.add('recording');
+                    this.innerHTML = '⏺️';
+                    
+                    recognition.onresult = function(event) {
+                        const transcript = Array.from(event.results)
+                            .map(result => result[0])
+                            .map(result => result.transcript)
+                            .join('');
+                        
+                        targetInput.value = transcript;
+                        saveToLocalStorage();
+                    };
+
+                    recognition.onerror = function(event) {
+                        console.error('Speech recognition error:', event.error);
+                        alert('Error: ' + event.error + '. Please check your microphone permissions.');
+                        button.classList.remove('recording');
+                        button.innerHTML = '🎤';
+                    };
+
+                    recognition.onend = function() {
+                        button.classList.remove('recording');
+                        button.innerHTML = '🎤';
+                    };
+
+                    recognition.start();
+                }
+            });
+        });
+
+        // File upload functionality
+        const fileUpload = document.getElementById('fileUpload');
+        const filePreview = document.getElementById('filePreview');
+        let uploadedFiles = [];
+
+        fileUpload.addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            files.forEach(file => {
+                uploadedFiles.push(file);
+                displayFile(file);
+            });
+        });
+
+        function displayFile(file) {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.innerHTML = `
+                <span>${file.name}</span>
+                <button class="file-remove" onclick="removeFile('${file.name}')">×</button>
+            `;
+            filePreview.appendChild(fileItem);
+        }
+
+        function removeFile(fileName) {
+            uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
+            const fileItems = filePreview.querySelectorAll('.file-item');
+            fileItems.forEach(item => {
+                if (item.textContent.includes(fileName)) {
+                    item.remove();
+                }
+            });
+        }
+
+        // Save form functionality
+        function saveForm() {
+            saveToLocalStorage();
+            alert('Form saved to browser storage successfully!');
+        }
+
+        // Download PDF functionality
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            
+            // Hide buttons and interactive elements
+            const buttonsToHide = document.querySelectorAll('.mic-button, .button-group, .warning-notice, .privacy-notice');
+            buttonsToHide.forEach(el => el.style.display = 'none');
+            
+            // Get patient name for filename
+            const patientName = document.getElementById('name').value || 'Patient';
+            const surname = patientName.split(' ').pop();
+            const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
+            const filename = `RecordCard-${surname}-${date}.pdf`;
+            
+            // Create PDF
+            html2canvas(document.getElementById('recordCard'), {
+                scale: 2,
+                logging: false,
+                useCORS: true
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+                const imgWidth = canvas.width;
+                const imgHeight = canvas.height;
+                const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+                const imgX = (pdfWidth - imgWidth * ratio) / 2;
+                const imgY = 10;
+                
+                pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+                pdf.save(filename);
+                
+                // Show buttons again
+                buttonsToHide.forEach(el => el.style.display = '');
+            });
+        }
+
+        // Email form functionality
+        function emailForm() {
+            // Collect form data
+            const patientName = document.getElementById('name').value || 'Not specified';
+            const dob = document.getElementById('dob').value || 'Not specified';
+            const reasonVisit = document.getElementById('reasonVisit').value || 'Not specified';
+            const date = document.getElementById('date').value || new Date().toISOString().split('T')[0];
+            
+            // Get visual acuity
+            const vaRE = document.getElementById('vaRE').value || 'Not recorded';
+            const vaLE = document.getElementById('vaLE').value || 'Not recorded';
+            
+            // Get IOP
+            const iopRE = document.getElementById('iopRE').value || 'Not recorded';
+            const iopLE = document.getElementById('iopLE').value || 'Not recorded';
+            const iopTime = document.getElementById('iopTime').value || 'Not recorded';
+            
+            // Get advice given
+            const adviceCheckboxes = document.querySelectorAll('input[name="adviceGiven"]:checked');
+            const adviceGiven = Array.from(adviceCheckboxes).map(cb => cb.value).join(', ') || 'None';
+            
+            // Create email subject
+            const subject = `Optometric Record - ${patientName} - ${date}`;
+            
+            // Create email body
+            const body = `OPTOMETRIC CLINICAL RECORD SUMMARY
+            
+Patient Details:
+- Name: ${patientName}
+- Date of Birth: ${dob}
+- Date of Examination: ${date}
+
+Reason for Visit:
+${reasonVisit}
+
+Clinical Observations:
+- Visual Acuity: RE ${vaRE} / LE ${vaLE}
+- IOP: RE ${iopRE} / LE ${iopLE} (Time: ${iopTime})
+
+Advice Given:
+${adviceGiven}
+
+Additional Notes:
+${document.getElementById('additionalNotes').value || 'None'}
+
+---
+Note: This is a summary only. Please download and attach the full PDF record for complete documentation.
+            
+Generated by Optometric Clinical Record Card System`;
+            
+            // Create mailto link
+            const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            
+            // Open email client
+            window.location.href = mailtoLink;
+            
+            // Alert user
+            setTimeout(() => {
+                alert('Email client opened with summary. Please download the PDF and attach it to your email for complete records.');
+            }, 500);
+        }
+
+        // Load saved data on page load
+        window.addEventListener('load', function() {
+            loadFromLocalStorage();
+            calculateAge();
+        });
+    </script>
+</body>
+</html>
