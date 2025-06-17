@@ -76,6 +76,11 @@
             min-width: 200px;
         }
 
+        .form-row > .form-group.narrow {
+            min-width: 100px;
+            flex: 0.5;
+        }
+
         label {
             display: block;
             font-weight: 500;
@@ -85,8 +90,10 @@
 
         input[type="text"],
         input[type="tel"],
+        input[type="email"],
         input[type="date"],
         input[type="time"],
+        input[type="number"],
         textarea,
         select {
             width: 100%;
@@ -284,6 +291,31 @@
             gap: 5px;
         }
 
+        .prescription-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .prescription-table th,
+        .prescription-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .prescription-table th {
+            background-color: #ecf0f1;
+            font-weight: 600;
+        }
+
+        .prescription-table input {
+            width: 100%;
+            border: none;
+            padding: 5px;
+            text-align: center;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -303,6 +335,10 @@
 
             .btn {
                 width: 100%;
+            }
+
+            .prescription-table {
+                font-size: 14px;
             }
         }
 
@@ -356,7 +392,7 @@
                     <label for="dob">Date of Birth</label>
                     <input type="date" id="dob" name="dob" onchange="calculateAge()">
                 </div>
-                <div class="form-group">
+                <div class="form-group narrow">
                     <label for="age">Age</label>
                     <input type="text" id="age" name="age" readonly>
                 </div>
@@ -377,10 +413,35 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-wrapper">
+                        <input type="email" id="email" name="email">
+                        <button class="mic-button" data-target="email" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="preferredContact">Preferred Contact Method</label>
+                    <select id="preferredContact" name="preferredContact">
+                        <option value="">Select...</option>
+                        <option value="Phone">Phone</option>
+                        <option value="Email">Email</option>
+                        <option value="Text">Text</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
                     <label for="idReference">ID Reference</label>
                     <div class="input-wrapper">
                         <input type="text" id="idReference" name="idReference">
                         <button class="mic-button" data-target="idReference" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="nhsNumber">NHS/Insurance Number</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="nhsNumber" name="nhsNumber">
+                        <button class="mic-button" data-target="nhsNumber" aria-label="Voice input">🎤</button>
                     </div>
                 </div>
             </div>
@@ -525,6 +586,80 @@
             </div>
         </div>
 
+        <!-- Prescription Details -->
+        <div class="section">
+            <h2 class="section-header">Prescription Details</h2>
+            <h3 style="margin-top: 15px; margin-bottom: 10px; font-size: 16px;">Current Prescription</h3>
+            <table class="prescription-table">
+                <thead>
+                    <tr>
+                        <th>Eye</th>
+                        <th>Sphere</th>
+                        <th>Cylinder</th>
+                        <th>Axis</th>
+                        <th>Add</th>
+                        <th>Prism</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>RE</td>
+                        <td><input type="text" id="sphereRE" name="sphereRE"></td>
+                        <td><input type="text" id="cylRE" name="cylRE"></td>
+                        <td><input type="text" id="axisRE" name="axisRE"></td>
+                        <td><input type="text" id="addRE" name="addRE"></td>
+                        <td><input type="text" id="prismRE" name="prismRE"></td>
+                    </tr>
+                    <tr>
+                        <td>LE</td>
+                        <td><input type="text" id="sphereLE" name="sphereLE"></td>
+                        <td><input type="text" id="cylLE" name="cylLE"></td>
+                        <td><input type="text" id="axisLE" name="axisLE"></td>
+                        <td><input type="text" id="addLE" name="addLE"></td>
+                        <td><input type="text" id="prismLE" name="prismLE"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3 style="margin-top: 20px; margin-bottom: 10px; font-size: 16px;">Previous Prescription</h3>
+            <table class="prescription-table">
+                <thead>
+                    <tr>
+                        <th>Eye</th>
+                        <th>Sphere</th>
+                        <th>Cylinder</th>
+                        <th>Axis</th>
+                        <th>Add</th>
+                        <th>Prism</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>RE</td>
+                        <td><input type="text" id="prevSphereRE" name="prevSphereRE"></td>
+                        <td><input type="text" id="prevCylRE" name="prevCylRE"></td>
+                        <td><input type="text" id="prevAxisRE" name="prevAxisRE"></td>
+                        <td><input type="text" id="prevAddRE" name="prevAddRE"></td>
+                        <td><input type="text" id="prevPrismRE" name="prevPrismRE"></td>
+                    </tr>
+                    <tr>
+                        <td>LE</td>
+                        <td><input type="text" id="prevSphereLE" name="prevSphereLE"></td>
+                        <td><input type="text" id="prevCylLE" name="prevCylLE"></td>
+                        <td><input type="text" id="prevAxisLE" name="prevAxisLE"></td>
+                        <td><input type="text" id="prevAddLE" name="prevAddLE"></td>
+                        <td><input type="text" id="prevPrismLE" name="prevPrismLE"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="form-group" style="margin-top: 15px;">
+                <label>Prescription Issued?</label>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="prescriptionIssued" name="prescriptionIssued">
+                    <label for="prescriptionIssued">Yes</label>
+                </div>
+            </div>
+        </div>
+
         <!-- Clinical Observations -->
         <div class="section">
             <h2 class="section-header">Clinical Observations</h2>
@@ -562,6 +697,71 @@
                 <div class="form-group">
                     <label for="iopTime">Time</label>
                     <input type="time" id="iopTime" name="iopTime">
+                </div>
+                <div class="form-group">
+                    <label for="tonometryMethod">Tonometry Method</label>
+                    <select id="tonometryMethod" name="tonometryMethod">
+                        <option value="">Select...</option>
+                        <option value="NCT">NCT</option>
+                        <option value="Goldmann">Goldmann</option>
+                        <option value="iCare">iCare</option>
+                        <option value="Perkins">Perkins</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pupils">Pupillary Reflexes (PERRLA)</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="pupils" name="pupils" placeholder="e.g., PERRLA">
+                        <button class="mic-button" data-target="pupils" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="motility">Motility/Cover Test</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="motility" name="motility">
+                        <button class="mic-button" data-target="motility" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="confrontation">Confrontation Fields</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="confrontation" name="confrontation">
+                        <button class="mic-button" data-target="confrontation" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="colourVision">Colour Vision</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="colourVision" name="colourVision">
+                        <button class="mic-button" data-target="colourVision" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="slitLamp">Slit Lamp Findings (Anterior Eye)</label>
+                <div class="input-wrapper">
+                    <textarea id="slitLamp" name="slitLamp"></textarea>
+                    <button class="mic-button" data-target="slitLamp" aria-label="Voice input">🎤</button>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Dilation Performed?</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="dilationPerformed" name="dilationPerformed">
+                        <label for="dilationPerformed">Yes</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="dropsUsed">Drops Used</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="dropsUsed" name="dropsUsed">
+                        <button class="mic-button" data-target="dropsUsed" aria-label="Voice input">🎤</button>
+                    </div>
                 </div>
             </div>
             <div class="form-row">
@@ -763,6 +963,49 @@
             </div>
         </div>
 
+        <!-- Financial/Payment Section -->
+        <div class="section">
+            <h2 class="section-header">Financial/Payment Details</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="frameCost">Cost of Frames (£)</label>
+                    <input type="number" id="frameCost" name="frameCost" step="0.01" onchange="calculateTotal()">
+                </div>
+                <div class="form-group">
+                    <label for="lensCost">Cost of Lenses (£)</label>
+                    <input type="number" id="lensCost" name="lensCost" step="0.01" onchange="calculateTotal()">
+                </div>
+                <div class="form-group">
+                    <label for="totalCost">Total Cost (£)</label>
+                    <input type="number" id="totalCost" name="totalCost" step="0.01" readonly>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="depositPaid">Deposit Paid (£)</label>
+                    <input type="number" id="depositPaid" name="depositPaid" step="0.01" onchange="calculateBalance()">
+                </div>
+                <div class="form-group">
+                    <label for="balanceDue">Balance Due (£)</label>
+                    <input type="number" id="balanceDue" name="balanceDue" step="0.01" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="paymentMethod">Payment Method</label>
+                    <select id="paymentMethod" name="paymentMethod">
+                        <option value="">Select...</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Card">Card</option>
+                        <option value="Insurance">Insurance</option>
+                        <option value="Mixed">Mixed</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="collectionDate">Collection Date</label>
+                <input type="date" id="collectionDate" name="collectionDate">
+            </div>
+        </div>
+
         <!-- Practitioner Notes & Consent -->
         <div class="section">
             <h2 class="section-header">Practitioner Notes & Consent</h2>
@@ -795,6 +1038,52 @@
                     <div class="checklist-item">
                         <input type="checkbox" id="rebooked" name="adviceGiven" value="Rebooked">
                         <label for="rebooked">Rebooked</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="referralTo">Referral To (if applicable)</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="referralTo" name="referralTo">
+                        <button class="mic-button" data-target="referralTo" aria-label="Voice input">🎤</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="referralUrgency">Referral Urgency</label>
+                    <select id="referralUrgency" name="referralUrgency">
+                        <option value="">Select...</option>
+                        <option value="Routine">Routine</option>
+                        <option value="Urgent">Urgent</option>
+                        <option value="Emergency">Emergency</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="nextAppointment">Next Appointment/Recall Date</label>
+                <input type="date" id="nextAppointment" name="nextAppointment">
+            </div>
+            <div class="form-group">
+                <label>Driver Vision Standards Met?</label>
+                <div class="checkbox-group">
+                    <input type="radio" id="driverStandardsYes" name="driverStandards" value="Yes">
+                    <label for="driverStandardsYes">Yes</label>
+                    <input type="radio" id="driverStandardsNo" name="driverStandards" value="No">
+                    <label for="driverStandardsNo">No</label>
+                    <input type="radio" id="driverStandardsAdvised" name="driverStandards" value="Advised">
+                    <label for="driverStandardsAdvised">Advised</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Consents</label>
+                <div class="checklist-group">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="consentDilation" name="consentDilation">
+                        <label for="consentDilation">Consent for Dilation</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="consentPhotos" name="consentPhotos">
+                        <label for="consentPhotos">Consent for Photos/Imaging</label>
                     </div>
                 </div>
             </div>
@@ -854,8 +1143,14 @@
         function saveToLocalStorage() {
             const formData = {};
             formInputs.forEach(input => {
-                if (input.type === 'checkbox') {
-                    formData[input.id] = input.checked;
+                if (input.type === 'checkbox' || input.type === 'radio') {
+                    if (input.type === 'radio') {
+                        if (input.checked) {
+                            formData[input.name] = input.value;
+                        }
+                    } else {
+                        formData[input.id] = input.checked;
+                    }
                 } else {
                     formData[input.id] = input.value;
                 }
@@ -876,6 +1171,14 @@
                         } else {
                             input.value = formData[key];
                         }
+                    } else {
+                        // Handle radio buttons
+                        const radios = document.querySelectorAll(`input[name="${key}"]`);
+                        radios.forEach(radio => {
+                            if (radio.value === formData[key]) {
+                                radio.checked = true;
+                            }
+                        });
                     }
                 });
             }
@@ -894,6 +1197,23 @@
                 }
                 document.getElementById('age').value = age;
             }
+        }
+
+        // Calculate total cost
+        function calculateTotal() {
+            const frameCost = parseFloat(document.getElementById('frameCost').value) || 0;
+            const lensCost = parseFloat(document.getElementById('lensCost').value) || 0;
+            const total = frameCost + lensCost;
+            document.getElementById('totalCost').value = total.toFixed(2);
+            calculateBalance();
+        }
+
+        // Calculate balance due
+        function calculateBalance() {
+            const total = parseFloat(document.getElementById('totalCost').value) || 0;
+            const deposit = parseFloat(document.getElementById('depositPaid').value) || 0;
+            const balance = total - deposit;
+            document.getElementById('balanceDue').value = balance.toFixed(2);
         }
 
         // Set today's date
@@ -1050,9 +1370,20 @@
             const iopLE = document.getElementById('iopLE').value || 'Not recorded';
             const iopTime = document.getElementById('iopTime').value || 'Not recorded';
             
+            // Get prescription
+            const sphereRE = document.getElementById('sphereRE').value || 'N/A';
+            const cylRE = document.getElementById('cylRE').value || 'N/A';
+            const axisRE = document.getElementById('axisRE').value || 'N/A';
+            const sphereLE = document.getElementById('sphereLE').value || 'N/A';
+            const cylLE = document.getElementById('cylLE').value || 'N/A';
+            const axisLE = document.getElementById('axisLE').value || 'N/A';
+            
             // Get advice given
             const adviceCheckboxes = document.querySelectorAll('input[name="adviceGiven"]:checked');
             const adviceGiven = Array.from(adviceCheckboxes).map(cb => cb.value).join(', ') || 'None';
+            
+            // Get next appointment
+            const nextAppointment = document.getElementById('nextAppointment').value || 'Not scheduled';
             
             // Create email subject
             const subject = `Optometric Record - ${patientName} - ${date}`;
@@ -1072,8 +1403,14 @@ Clinical Observations:
 - Visual Acuity: RE ${vaRE} / LE ${vaLE}
 - IOP: RE ${iopRE} / LE ${iopLE} (Time: ${iopTime})
 
+Current Prescription:
+- RE: Sph ${sphereRE} / Cyl ${cylRE} / Axis ${axisRE}
+- LE: Sph ${sphereLE} / Cyl ${cylLE} / Axis ${axisLE}
+
 Advice Given:
 ${adviceGiven}
+
+Next Appointment: ${nextAppointment}
 
 Additional Notes:
 ${document.getElementById('additionalNotes').value || 'None'}
@@ -1099,6 +1436,7 @@ Generated by Optometric Clinical Record Card System`;
         window.addEventListener('load', function() {
             loadFromLocalStorage();
             calculateAge();
+            calculateTotal();
         });
     </script>
 </body>
