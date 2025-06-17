@@ -186,32 +186,56 @@
         }
 
         .file-preview {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
             margin-top: 15px;
         }
 
         .file-item {
             position: relative;
-            padding: 10px;
             background: #ecf0f1;
             border-radius: 5px;
-            font-size: 14px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+
+        .file-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .file-item-info {
+            padding: 10px;
+            font-size: 12px;
+            word-break: break-all;
+        }
+
+        .file-item-pdf {
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #34495e;
+            color: white;
+            font-size: 48px;
         }
 
         .file-remove {
             position: absolute;
-            top: -5px;
-            right: -5px;
+            top: 5px;
+            right: 5px;
             background: #e74c3c;
             color: white;
             border: none;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            width: 25px;
+            height: 25px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 14px;
+            z-index: 10;
         }
 
         .button-group {
@@ -356,13 +380,25 @@
             .mic-button,
             .button-group,
             .warning-notice,
-            .privacy-notice {
+            .privacy-notice,
+            .file-remove {
                 display: none !important;
             }
 
             .section {
                 break-inside: avoid;
                 page-break-inside: avoid;
+            }
+
+            .file-preview {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+
+            .file-item img {
+                height: 120px;
+                object-fit: contain;
             }
         }
     </style>
@@ -1279,8 +1315,10 @@
         // File upload functionality
         const fileUpload = document.getElementById('fileUpload');
         const filePreview = document.getElementById('filePreview');
+        const fileUploadArea = document.querySelector('.file-upload-area');
         let uploadedFiles = [];
 
+        // Regular file input change
         fileUpload.addEventListener('change', function(e) {
             const files = Array.from(e.target.files);
             files.forEach(file => {
@@ -1289,24 +1327,99 @@
             });
         });
 
+        // Drag and drop functionality
+        fileUploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.style.backgroundColor = '#e3f2fd';
+            this.style.borderColor = '#2196F3';
+        });
+
+        fileUploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.style.backgroundColor = '';
+            this.style.borderColor = '#ddd';
+        });
+
+        fileUploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.style.backgroundColor = '';
+            this.style.borderColor = '#ddd';
+            
+            const files = Array.from(e.dataTransfer.files);
+            files.forEach(file => {
+                if (file.type.match(/image.*|application\/pdf/)) {
+                    uploadedFiles.push(file);
+                    displayFile(file);
+                } else {
+                    alert(`File type not supported: ${file.name}`);
+                }
+            });
+        });
+
         function displayFile(file) {
             const fileItem = document.createElement('div');
             fileItem.className = 'file-item';
-            fileItem.innerHTML = `
-                <span>${file.name}</span>
-                <button class="file-remove" onclick="removeFile('${file.name}')">×</button>
-            `;
+            fileItem.id = `file-${Date.now()}-${Math.random()}`;
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'file-remove';
+            removeBtn.innerHTML = '×';
+            removeBtn.onclick = () => removeFile(fileItem.id, file.name);
+            
+            if (file.type.startsWith('image/')) {
+                // For images, show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.alt = file.name;
+                    
+                    const info = document.createElement('div');
+                    info.className = 'file-item-info';
+                    info.textContent = file.name;
+                    
+                    fileItem.appendChild(img);
+                    fileItem.appendChild(info);
+                    fileItem.appendChild(removeBtn);
+                };
+                reader.readAsDataURL(file);
+            } else if (file.type === 'application/pdf') {
+                // For PDFs, show icon
+                const pdfIcon = document.createElement('div');
+                pdfIcon.className = 'file-item-pdf';
+                pdfIcon.innerHTML = '📄';
+                
+                const info = document.createElement('div');
+                info.className = 'file-item-info';
+                info.textContent = file.name;
+                
+                fileItem.appendChild(pdfIcon);
+                fileItem.appendChild(info);
+                fileItem.appendChild(removeBtn);
+            } else {
+                // For other files
+                const icon = document.createElement('div');
+                icon.className = 'file-item-pdf';
+                icon.innerHTML = '📎';
+                
+                const info = document.createElement('div');
+                info.className = 'file-item-info';
+                info.textContent = file.name;
+                
+                fileItem.appendChild(icon);
+                fileItem.appendChild(info);
+                fileItem.appendChild(removeBtn);
+            }
+            
             filePreview.appendChild(fileItem);
         }
 
-        function removeFile(fileName) {
+        function removeFile(itemId, fileName) {
             uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
-            const fileItems = filePreview.querySelectorAll('.file-item');
-            fileItems.forEach(item => {
-                if (item.textContent.includes(fileName)) {
-                    item.remove();
-                }
-            });
+            const fileItem = document.getElementById(itemId);
+            if (fileItem) {
+                fileItem.remove();
+            }
         }
 
         // Save form functionality
@@ -1320,7 +1433,7 @@
             const { jsPDF } = window.jspdf;
             
             // Hide buttons and interactive elements
-            const buttonsToHide = document.querySelectorAll('.mic-button, .button-group, .warning-notice, .privacy-notice');
+            const buttonsToHide = document.querySelectorAll('.mic-button, .button-group, .warning-notice, .privacy-notice, .file-remove');
             buttonsToHide.forEach(el => el.style.display = 'none');
             
             // Get patient name for filename
@@ -1333,7 +1446,9 @@
             html2canvas(document.getElementById('recordCard'), {
                 scale: 2,
                 logging: false,
-                useCORS: true
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff'
             }).then(canvas => {
                 const imgData = canvas.toDataURL('image/png');
                 const pdf = new jsPDF('p', 'mm', 'a4');
@@ -1341,14 +1456,42 @@
                 const pdfHeight = pdf.internal.pageSize.getHeight();
                 const imgWidth = canvas.width;
                 const imgHeight = canvas.height;
-                const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+                const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight) * 0.95;
                 const imgX = (pdfWidth - imgWidth * ratio) / 2;
                 const imgY = 10;
                 
-                pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+                // Calculate pages needed
+                const pageHeight = imgHeight * ratio;
+                const totalPages = Math.ceil(pageHeight / (pdfHeight - 20));
+                
+                // Add pages as needed
+                for (let i = 0; i < totalPages; i++) {
+                    if (i > 0) pdf.addPage();
+                    
+                    const startY = i * (pdfHeight - 20) / ratio;
+                    const sourceHeight = Math.min(imgHeight - startY, (pdfHeight - 20) / ratio);
+                    
+                    pdf.addImage(
+                        imgData, 
+                        'PNG', 
+                        imgX, 
+                        10, 
+                        imgWidth * ratio, 
+                        imgHeight * ratio,
+                        undefined,
+                        'FAST',
+                        0,
+                        -startY * ratio
+                    );
+                }
+                
                 pdf.save(filename);
                 
                 // Show buttons again
+                buttonsToHide.forEach(el => el.style.display = '');
+            }).catch(error => {
+                console.error('PDF generation error:', error);
+                alert('Error generating PDF. Please try printing instead.');
                 buttonsToHide.forEach(el => el.style.display = '');
             });
         }
@@ -1385,6 +1528,11 @@
             // Get next appointment
             const nextAppointment = document.getElementById('nextAppointment').value || 'Not scheduled';
             
+            // Get uploaded files
+            const filesList = uploadedFiles.length > 0 
+                ? uploadedFiles.map(f => `- ${f.name} (${f.type})`).join('\n')
+                : 'None';
+            
             // Create email subject
             const subject = `Optometric Record - ${patientName} - ${date}`;
             
@@ -1412,11 +1560,14 @@ ${adviceGiven}
 
 Next Appointment: ${nextAppointment}
 
+Uploaded Files/Images:
+${filesList}
+
 Additional Notes:
 ${document.getElementById('additionalNotes').value || 'None'}
 
 ---
-Note: This is a summary only. Please download and attach the full PDF record for complete documentation.
+Note: This is a summary only. Please download and attach the full PDF record for complete documentation including uploaded images/files.
             
 Generated by Optometric Clinical Record Card System`;
             
@@ -1428,7 +1579,7 @@ Generated by Optometric Clinical Record Card System`;
             
             // Alert user
             setTimeout(() => {
-                alert('Email client opened with summary. Please download the PDF and attach it to your email for complete records.');
+                alert('Email client opened with summary. Please download the PDF and attach it to your email for complete records including uploaded images.');
             }, 500);
         }
 
