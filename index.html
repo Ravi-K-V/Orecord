@@ -198,6 +198,8 @@
             border-radius: 5px;
             overflow: hidden;
             border: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
         }
 
         .file-item img {
@@ -211,6 +213,31 @@
             padding: 10px;
             font-size: 12px;
             word-break: break-all;
+            flex: 1;
+        }
+
+        .file-item-actions {
+            display: flex;
+            gap: 5px;
+            padding: 5px 10px;
+            background: #ecf0f1;
+            border-top: 1px solid #ddd;
+        }
+
+        .file-download {
+            flex: 1;
+            padding: 5px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .file-download:hover {
+            background: #2980b9;
         }
 
         .file-item-pdf {
@@ -381,7 +408,9 @@
             .button-group,
             .warning-notice,
             .privacy-notice,
-            .file-remove {
+            .file-remove,
+            .file-item-actions,
+            #downloadAllBtn {
                 display: none !important;
             }
 
@@ -404,6 +433,7 @@
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
     <div class="container" id="recordCard">
@@ -1148,6 +1178,7 @@
                     <input type="file" id="fileUpload" multiple accept=".pdf,.jpg,.jpeg,.png,.gif" style="display: none;">
                 </div>
                 <div class="file-preview" id="filePreview"></div>
+                <button class="btn btn-primary" onclick="downloadAllFiles()" style="margin-top: 15px; display: none;" id="downloadAllBtn">⬇ Download All Files as ZIP</button>
             </div>
         </div>
 
@@ -1316,7 +1347,17 @@
         const fileUpload = document.getElementById('fileUpload');
         const filePreview = document.getElementById('filePreview');
         const fileUploadArea = document.querySelector('.file-upload-area');
+        const downloadAllBtn = document.getElementById('downloadAllBtn');
         let uploadedFiles = [];
+
+        // Update download all button visibility
+        function updateDownloadAllButton() {
+            if (uploadedFiles.length > 0) {
+                downloadAllBtn.style.display = 'inline-block';
+            } else {
+                downloadAllBtn.style.display = 'none';
+            }
+        }
 
         // Regular file input change
         fileUpload.addEventListener('change', function(e) {
@@ -1325,6 +1366,7 @@
                 uploadedFiles.push(file);
                 displayFile(file);
             });
+            updateDownloadAllButton();
         });
 
         // Drag and drop functionality
@@ -1354,6 +1396,7 @@
                     alert(`File type not supported: ${file.name}`);
                 }
             });
+            updateDownloadAllButton();
         });
 
         function displayFile(file) {
@@ -1366,10 +1409,15 @@
             removeBtn.innerHTML = '×';
             removeBtn.onclick = () => removeFile(fileItem.id, file.name);
             
+            // Store file data for download
+            let fileDataUrl = null;
+            
             if (file.type.startsWith('image/')) {
                 // For images, show preview
                 const reader = new FileReader();
                 reader.onload = function(e) {
+                    fileDataUrl = e.target.result;
+                    
                     const img = document.createElement('img');
                     img.src = e.target.result;
                     img.alt = file.name;
@@ -1378,40 +1426,131 @@
                     info.className = 'file-item-info';
                     info.textContent = file.name;
                     
+                    const actions = document.createElement('div');
+                    actions.className = 'file-item-actions';
+                    
+                    const downloadBtn = document.createElement('button');
+                    downloadBtn.className = 'file-download';
+                    downloadBtn.innerHTML = '⬇ Download';
+                    downloadBtn.onclick = () => downloadFile(file.name, fileDataUrl);
+                    
+                    actions.appendChild(downloadBtn);
+                    
                     fileItem.appendChild(img);
                     fileItem.appendChild(info);
+                    fileItem.appendChild(actions);
                     fileItem.appendChild(removeBtn);
                 };
                 reader.readAsDataURL(file);
             } else if (file.type === 'application/pdf') {
                 // For PDFs, show icon
-                const pdfIcon = document.createElement('div');
-                pdfIcon.className = 'file-item-pdf';
-                pdfIcon.innerHTML = '📄';
-                
-                const info = document.createElement('div');
-                info.className = 'file-item-info';
-                info.textContent = file.name;
-                
-                fileItem.appendChild(pdfIcon);
-                fileItem.appendChild(info);
-                fileItem.appendChild(removeBtn);
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    fileDataUrl = e.target.result;
+                    
+                    const pdfIcon = document.createElement('div');
+                    pdfIcon.className = 'file-item-pdf';
+                    pdfIcon.innerHTML = '📄';
+                    
+                    const info = document.createElement('div');
+                    info.className = 'file-item-info';
+                    info.textContent = file.name;
+                    
+                    const actions = document.createElement('div');
+                    actions.className = 'file-item-actions';
+                    
+                    const downloadBtn = document.createElement('button');
+                    downloadBtn.className = 'file-download';
+                    downloadBtn.innerHTML = '⬇ Download';
+                    downloadBtn.onclick = () => downloadFile(file.name, fileDataUrl);
+                    
+                    actions.appendChild(downloadBtn);
+                    
+                    fileItem.appendChild(pdfIcon);
+                    fileItem.appendChild(info);
+                    fileItem.appendChild(actions);
+                    fileItem.appendChild(removeBtn);
+                };
+                reader.readAsDataURL(file);
             } else {
                 // For other files
-                const icon = document.createElement('div');
-                icon.className = 'file-item-pdf';
-                icon.innerHTML = '📎';
-                
-                const info = document.createElement('div');
-                info.className = 'file-item-info';
-                info.textContent = file.name;
-                
-                fileItem.appendChild(icon);
-                fileItem.appendChild(info);
-                fileItem.appendChild(removeBtn);
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    fileDataUrl = e.target.result;
+                    
+                    const icon = document.createElement('div');
+                    icon.className = 'file-item-pdf';
+                    icon.innerHTML = '📎';
+                    
+                    const info = document.createElement('div');
+                    info.className = 'file-item-info';
+                    info.textContent = file.name;
+                    
+                    const actions = document.createElement('div');
+                    actions.className = 'file-item-actions';
+                    
+                    const downloadBtn = document.createElement('button');
+                    downloadBtn.className = 'file-download';
+                    downloadBtn.innerHTML = '⬇ Download';
+                    downloadBtn.onclick = () => downloadFile(file.name, fileDataUrl);
+                    
+                    actions.appendChild(downloadBtn);
+                    
+                    fileItem.appendChild(icon);
+                    fileItem.appendChild(info);
+                    fileItem.appendChild(actions);
+                    fileItem.appendChild(removeBtn);
+                };
+                reader.readAsDataURL(file);
             }
             
             filePreview.appendChild(fileItem);
+        }
+
+        // Download individual file
+        function downloadFile(filename, dataUrl) {
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = filename;
+            link.click();
+        }
+
+        // Download all files as ZIP
+        function downloadAllFiles() {
+            if (uploadedFiles.length === 0) {
+                alert('No files to download');
+                return;
+            }
+            
+            const zip = new JSZip();
+            const promises = [];
+            
+            uploadedFiles.forEach(file => {
+                promises.push(
+                    new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const base64Data = e.target.result.split(',')[1];
+                            zip.file(file.name, base64Data, {base64: true});
+                            resolve();
+                        };
+                        reader.readAsDataURL(file);
+                    })
+                );
+            });
+            
+            Promise.all(promises).then(() => {
+                const patientName = document.getElementById('name').value || 'Patient';
+                const surname = patientName.split(' ').pop();
+                const date = new Date().toISOString().split('T')[0];
+                
+                zip.generateAsync({type: 'blob'}).then(function(content) {
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(content);
+                    link.download = `${surname}-${date}-attachments.zip`;
+                    link.click();
+                });
+            });
         }
 
         function removeFile(itemId, fileName) {
@@ -1420,6 +1559,7 @@
             if (fileItem) {
                 fileItem.remove();
             }
+            updateDownloadAllButton();
         }
 
         // Save form functionality
@@ -1433,7 +1573,7 @@
             const { jsPDF } = window.jspdf;
             
             // Hide buttons and interactive elements
-            const buttonsToHide = document.querySelectorAll('.mic-button, .button-group, .warning-notice, .privacy-notice, .file-remove');
+            const buttonsToHide = document.querySelectorAll('.mic-button, .button-group, .warning-notice, .privacy-notice, .file-remove, .file-item-actions, #downloadAllBtn');
             buttonsToHide.forEach(el => el.style.display = 'none');
             
             // Get patient name for filename
@@ -1489,10 +1629,12 @@
                 
                 // Show buttons again
                 buttonsToHide.forEach(el => el.style.display = '');
+                updateDownloadAllButton();
             }).catch(error => {
                 console.error('PDF generation error:', error);
                 alert('Error generating PDF. Please try printing instead.');
                 buttonsToHide.forEach(el => el.style.display = '');
+                updateDownloadAllButton();
             });
         }
 
@@ -1567,8 +1709,11 @@ Additional Notes:
 ${document.getElementById('additionalNotes').value || 'None'}
 
 ---
-Note: This is a summary only. Please download and attach the full PDF record for complete documentation including uploaded images/files.
-            
+Note: This is a summary only. Please return to the form to:
+1. Download the full PDF record (includes embedded images)
+2. Download individual files using the download button on each file
+3. Download all files as a ZIP archive using the "Download All Files as ZIP" button
+
 Generated by Optometric Clinical Record Card System`;
             
             // Create mailto link
@@ -1579,7 +1724,7 @@ Generated by Optometric Clinical Record Card System`;
             
             // Alert user
             setTimeout(() => {
-                alert('Email client opened with summary. Please download the PDF and attach it to your email for complete records including uploaded images.');
+                alert('Email client opened with summary. To include attachments:\n\n1. Download individual files using the ⬇ button on each file\n2. Or download all files as ZIP\n3. Then attach them to your email');
             }, 500);
         }
 
